@@ -14,7 +14,7 @@ export class UserController {
     @Post('register')
     async register(@Body() userDto: UserDto) {
         try {
-            return this.userService.create(userDto);
+            return await this.userService.create(userDto);
         } catch (error) {
             // Capturar y manejar errores generados en el servicio
             throw new HttpException(
@@ -22,6 +22,11 @@ export class UserController {
                 error.status || HttpStatus.INTERNAL_SERVER_ERROR,
             );
         }
+    }
+
+    @Get()
+    async findAll(): Promise<User[]> {
+        return this.userService.findAll();
     }
 
 }

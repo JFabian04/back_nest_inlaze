@@ -1,6 +1,6 @@
-import { Comment } from 'src/modules/comment/entities/comment.entity';
-import { Project } from 'src/modules/project/entities/project.entity';
-import { User } from 'src/modules/user/entities/user.entity';
+import { Comment } from '../../comment/entities/comment.entity';
+import { Project } from '../../project/entities/project.entity';
+import { User } from '../../user/entities/user.entity';
 import {
     Entity,
     PrimaryGeneratedColumn,

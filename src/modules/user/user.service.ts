@@ -20,7 +20,7 @@ export class UserService {
         try {
             // Encriptar la contraeña
             const saltRound = parseInt(process.env.SALT_ROUNDS);
-            
+
             const hashPassword = await bcrypt.hash(userDto.password, saltRound);
 
             // Crear y gurdar el registro
@@ -29,10 +29,13 @@ export class UserService {
                 password: hashPassword,
             });
 
-            return this.userRepository.save(user);
+            return await this.userRepository.save(user);
         } catch (error) {
             throw new InternalServerErrorException('Error interno del servidor: ' + error.message);
         }
     }
 
+    async findAll(): Promise<User[]> {
+        return this.userRepository.find();
+    }
 }

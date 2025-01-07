@@ -1,11 +1,14 @@
-import { Comment } from 'src/modules/comment/entities/comment.entity';
-import { Project } from 'src/modules/project/entities/project.entity';
-import { Task } from 'src/modules/task/entities/task.entity';
+import { Role } from '../../../entitites/role.entity';
+import { Comment } from '../../comment/entities/comment.entity';
+import { Project } from '../../project/entities/project.entity';
+import { Task } from '../../task/entities/task.entity';
 import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
     OneToMany,
+    ManyToOne,
+    JoinColumn,
   } from 'typeorm';
   
   
@@ -31,5 +34,9 @@ import {
   
     @OneToMany(() => Comment, (comment) => comment.user)
     comments: Comment[];
+
+    @ManyToOne(() => Role, (role) => role.users)
+    @JoinColumn({ name: 'role_id' })
+    role: Role;
   }
   

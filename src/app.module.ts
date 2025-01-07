@@ -7,9 +7,10 @@ import { UserModule } from './modules/user/user.module';
 import { ProjectModule } from './modules/project/project.module';
 import { TaskModule } from './modules/task/task.module';
 import { CommentModule } from './modules/comment/comment.module';
-import { getTypeOrmConfig } from './config/database';
+import { getDatabaseConfig  } from './database/config';
 import { APP_FILTER } from '@nestjs/core';
 import { DatabaseExceptionFilter } from './filters/database-exception.filter';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -24,13 +25,14 @@ import { DatabaseExceptionFilter } from './filters/database-exception.filter';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
-        getTypeOrmConfig(configService),
+        getDatabaseConfig (configService),
     }),
 
     UserModule,
     ProjectModule,
     TaskModule,
     CommentModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
