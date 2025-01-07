@@ -8,6 +8,7 @@ import { IsUnique } from 'src/validators/is-unique.validator';
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   providers: [UserService, IsUnique],
-  controllers: [UserController]
+  controllers: [UserController],
+  exports: [TypeOrmModule],
 })
 export class UserModule {}
