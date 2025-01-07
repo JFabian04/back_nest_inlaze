@@ -9,7 +9,7 @@ import { TaskModule } from './modules/task/task.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { getDatabaseConfig  } from './database/config';
 import { APP_FILTER } from '@nestjs/core';
-import { DatabaseExceptionFilter } from './filters/database-exception.filter';
+import { DatabaseExceptionFilter } from './utils/database-exception.filter';
 import { AuthModule } from './modules/auth/auth.module';
 
 @Module({

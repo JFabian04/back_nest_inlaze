@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { DataSourceOptions } from 'typeorm';
 
-// Configuración común para TypeORM y NestJS
+// Configuración para TypeORM (conexion con la BD)
 export const getDatabaseConfig = (configService: ConfigService): DataSourceOptions => {
   const isDevelopment = configService.get<string>('NODE_ENV') === 'development';
 

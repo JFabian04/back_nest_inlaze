@@ -13,15 +13,10 @@ export class UserController {
      */
     @Post('register')
     async register(@Body() userDto: UserDto) {
-        try {
-            return await this.userService.create(userDto);
-        } catch (error) {
-            // Capturar y manejar errores generados en el servicio
-            throw new HttpException(
-                error.response || 'Error interno del servidor.',
-                error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        await this.userService.create(userDto);
+        return {
+          message: 'Usuario registrado con éxito.',
+        };
     }
 
     @Get()
