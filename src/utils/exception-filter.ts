@@ -18,8 +18,8 @@ import {
   
       const message =
         exception instanceof HttpException
-          ? exception.getResponse()
-          : 'Internal server error';
+          ? exception.message
+          : exception;
   
       response.status(status).json({
         status: 'error',
