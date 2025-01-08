@@ -10,14 +10,10 @@ export class TaskController {
 
     @Post()
     async create(@Body() createTaskDto: TaskDto) {
-        try {
-            await this.taskService.create(createTaskDto);
-            return {
-                message: 'Tarea registrado correctamente',
-            };
-        } catch (error) {
-            throw new NotFoundException(error.message || 'Registro no encontrado');
-        }
+        await this.taskService.create(createTaskDto);
+        return {
+            message: 'Tarea registrada correctamente',
+        };
     }
 
     @Get()

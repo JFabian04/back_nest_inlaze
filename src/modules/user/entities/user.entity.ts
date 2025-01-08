@@ -30,24 +30,24 @@ export class User {
   password: string;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt: Date | null;
+  deletedA_at: Date | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 
   @OneToMany(() => Project, (project) => project.user)
   projects: Project[];
 
-  @OneToMany(() => Task, (task) => task.assignedTo)
+  @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
   @ManyToOne(() => Role, (role) => role.users)
-  @JoinColumn({ name: 'role_id' })
-  role: Role;
+  @JoinColumn({ name: 'role_id' }) 
+  role: number;
 }

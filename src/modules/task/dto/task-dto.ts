@@ -1,6 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, IsNotEmpty, IsDate, IsInt, IsPositive, IsOptional } from 'class-validator';
-import { User } from '../../user/entities/user.entity';
+import {IsNotEmpty, IsDate, IsOptional } from 'class-validator';
 
 export class TaskDto {
     @IsNotEmpty({ message: 'Campo requerido' })
@@ -16,5 +15,8 @@ export class TaskDto {
     dateLimit: Date;
 
     @IsNotEmpty({ message: 'Campo requerido' })
-    assignedTo: User;
+    user: number;
+
+    @IsNotEmpty({ message: 'Campo requerido' })
+    project: number;
 }

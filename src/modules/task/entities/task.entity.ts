@@ -10,6 +10,7 @@ import {
   DeleteDateColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 
 export enum Status {
@@ -40,21 +41,22 @@ export class Task {
   dateLimit: Date;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt: Date | null;
+  deleted_at: Date | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 
   @ManyToOne(() => Project, (project) => project.tasks)
-  project: Project;
+  @JoinColumn({ name: 'project_id' })
+  project: number;
 
   @ManyToOne(() => User, (user) => user.tasks)
-  assignedTo: User;
+  @JoinColumn({ name: 'task_id' })
+  user: number;
 
   @OneToMany(() => Comment, (comment) => comment.task)
   comments: Comment[];
-  task: Task;
 }

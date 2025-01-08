@@ -9,5 +9,6 @@ import { QueryModule } from 'src/common/query/query.module';
   imports: [TypeOrmModule.forFeature([Project]), QueryModule],
   providers: [ProjectService],
   controllers: [ProjectController],
+  exports: [TypeOrmModule.forFeature([Project])]
 })
 export class ProjectModule { }

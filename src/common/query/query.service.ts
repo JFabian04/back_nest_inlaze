@@ -46,14 +46,15 @@ export class QueryService {
 
     // Ordenación
     if (sortField) {
-      queryBuilder.orderBy(sortField, sortOrder || 'ASC');
+      queryBuilder.orderBy(sortField, sortOrder || 'DESC');
     }
 
     // Paginación
     queryBuilder.skip((page - 1) * limit).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
-
+    console.log('data: ', data);
+    
     return { data, total };
   }
 }

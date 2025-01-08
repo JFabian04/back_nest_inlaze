@@ -9,6 +9,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  JoinColumn,
 } from 'typeorm';
 
 
@@ -27,15 +28,16 @@ export class Project {
   status: boolean;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt: Date | null;
+  deleted_at: Date | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 
   @ManyToOne(() => User, (user) => user.projects)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => Task, (task) => task.project)

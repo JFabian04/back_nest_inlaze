@@ -8,6 +8,7 @@ import {
   DeleteDateColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 
 
@@ -20,17 +21,19 @@ export class Comment {
   content: string;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt: Date | null;
+  deleted_at: Date | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 
   @ManyToOne(() => Task, (task) => task.comments)
-  task: Task;
+  @JoinColumn({ name: 'task_id' })
+  task: number;
 
   @ManyToOne(() => User, (user) => user.comments)
-  user: User;
+  @JoinColumn({ name: 'user_id' })
+  user: number;
 }

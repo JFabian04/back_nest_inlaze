@@ -7,12 +7,14 @@ import { TaskDto } from './dto/task-dto';
 import { UpdateTaskDto } from './dto/update-dto';
 import { User } from '../user/entities/user.entity';
 import { existsForeignValidator } from 'src/validators/exists-validator';
+import { Project } from '../project/entities/project.entity';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Project) private readonly projectRepository: Repository<Project>,
 
     private readonly queryService: QueryService,
   ) { }
@@ -20,16 +22,20 @@ export class TaskService {
 
   async create(createTaskDto: TaskDto): Promise<void> {
     //Validar si el usuario asignado existe 
-    await existsForeignValidator(this.userRepository, createTaskDto.assignedTo, 'id');
+    await existsForeignValidator(this.userRepository, createTaskDto.user, 'id', 'User');
 
-    const task = this.taskRepository.create(createTaskDto);
-    await this.taskRepository.save(task);
+    //Validar si el projeyecto existe 
+    await existsForeignValidator(this.projectRepository, createTaskDto.project, 'id', 'Project');
+
+    const item = this.taskRepository.create(createTaskDto);
+    console.log(item);
+    await this.taskRepository.save(item);
   }
-
 
   async findAll(params): Promise<{ data: Task[], total: number }> {
     return await this.queryService.findWithPaginationAndFilters(params, this.taskRepository);
   }
+
   async findOne(id: number): Promise<Task> {
     const task = await this.taskRepository.findOne({ where: { id } });
     if (!task) {
@@ -40,7 +46,10 @@ export class TaskService {
 
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<void> {
     //Validar si el usuario asignado existe 
-    await existsForeignValidator(this.userRepository, updateTaskDto.assignedTo, 'id');
+    await existsForeignValidator(this.userRepository, updateTaskDto.user, 'id');
+
+    //Validar si el projeyecto existe 
+    await existsForeignValidator(this.projectRepository, updateTaskDto.project, 'id', 'Project');
 
     // Realiza actualizacion
     const task = await this.findOne(id);
@@ -52,4 +61,5 @@ export class TaskService {
     const task = await this.findOne(id);
     await this.taskRepository.softRemove(task);
   }
+
 }
