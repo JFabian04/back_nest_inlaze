@@ -18,8 +18,8 @@ export class ProjectController {
     }
 
     @Get()
-    findAll(@Query() query: QueryParams) {
-        return this.projectService.findAll(query);  // Pasar los parámetros al servicio
+    async findAll(@Query() query: QueryParams) {
+        return await this.projectService.findAll(query);
     }
 
     @Get(':id')
@@ -42,13 +42,10 @@ export class ProjectController {
 
     @Delete(':id')
     async remove(@Param('id') id: number) {
-        try {
             await this.projectService.softDelete(id);
             return {
                 message: 'Proyecto eliminado correctamente',
             };
-        } catch (error) {
-            throw new NotFoundException(error.message || 'Registro no encontrado');
-        }
+   
     }
 }

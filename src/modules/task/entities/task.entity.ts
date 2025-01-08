@@ -13,8 +13,8 @@ import {
 } from 'typeorm';
 
 export enum Status {
-  PorHacer = 'por_hacer',
-  EnProgreso = 'en_progreso',
+  PorHacer = 'por hacer',
+  EnProgreso = 'en progreso',
   Completada = 'completada',
 }
 
@@ -56,4 +56,5 @@ export class Task {
 
   @OneToMany(() => Comment, (comment) => comment.task)
   comments: Comment[];
+  task: Task;
 }

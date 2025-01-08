@@ -9,6 +9,6 @@ import { IsUnique } from 'src/validators/is-unique.validator';
   imports: [TypeOrmModule.forFeature([User])],
   providers: [UserService, IsUnique],
   controllers: [UserController],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, TypeOrmModule.forFeature([User])],
 })
-export class UserModule {}
+export class UserModule { }

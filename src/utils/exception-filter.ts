@@ -18,7 +18,7 @@ import {
   
       const message =
         exception instanceof HttpException
-          ? exception.message
+          ? exception.getResponse()
           : exception;
   
       response.status(status).json({

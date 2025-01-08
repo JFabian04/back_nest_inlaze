@@ -21,13 +21,13 @@ export class ProjectService {
     }
 
     async findAll(params): Promise<{ data: Project[], total: number }> {
-        return this.queryService.findWithPaginationAndFilters(params, this.projectRepository);  // Pasamos el repositorio de Project a QueryService
+        return await this.queryService.findWithPaginationAndFilters(params, this.projectRepository);
     }
 
     async findOne(id: number): Promise<Project> {
         const project = await this.projectRepository.findOneBy({ id });
         if (!project) {
-            throw new NotFoundException(`Registro con id ${id} no fue encontrado`);
+            throw new NotFoundException('No se encontró el registro con Id: ' + id);
         }
         return project;
     }
@@ -39,11 +39,7 @@ export class ProjectService {
     }
 
     async softDelete(id: number): Promise<void> {
-        const project = await this.projectRepository.findOneBy({ id });
-        if (!project) {
-            throw new Error('No se encontró el registro con Id: ' + id);
-        }
-
+        const project = await this.findOne(id);
         await this.projectRepository.softRemove(project);
     }
 }
