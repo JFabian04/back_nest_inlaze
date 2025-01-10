@@ -26,14 +26,45 @@ export class CommentService {
         await existsForeignValidator(this.taskRepository, createCommentDto.task, 'id', 'Tarea');
 
         const item = this.commentRepository.create(createCommentDto);
-        
+
         await this.commentRepository.save(item);
     }
 
     async findAll(params): Promise<{ data: Comment[], total: number }> {
-        return await this.queryService.findWithPaginationAndFilters(params, this.commentRepository);
-    }
+        const { task_id, page = 1, limit = 10, filters, sortField, sortOrder = 'ASC' } = params;
 
+        if (!task_id) {
+            throw new Error('El parámetro "task_id" es obligatorio');
+        }
+
+        const queryBuilder = this.commentRepository.createQueryBuilder('comment');
+
+        // Join con user
+        queryBuilder.leftJoinAndSelect('comment.user', 'user');
+
+        // Join con Task
+        queryBuilder.leftJoinAndSelect('comment.task', 'task');
+
+        queryBuilder.andWhere('comment.task_id = :task_id', { task_id });
+
+        // Filtros adicionales
+        if (filters) {
+            Object.keys(filters).forEach((key) => {
+                if (filters[key]) {
+                    queryBuilder.andWhere(`comment.${key} = :${key}`, { [key]: filters[key] });
+                }
+            });
+        }
+
+        queryBuilder.orderBy('comment.created_at', sortOrder);
+
+        const skip = (page - 1) * limit;
+        queryBuilder.skip(skip).take(limit);
+
+        const [data, total] = await queryBuilder.getManyAndCount();
+
+        return { data, total };
+    }
 
     async findOne(id: number): Promise<Comment> {
         const data = await this.commentRepository.findOne({ where: { id } });

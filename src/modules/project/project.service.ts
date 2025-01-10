@@ -40,6 +40,7 @@ export class ProjectService {
 
     async softDelete(id: number): Promise<void> {
         const project = await this.findOne(id);
+
         await this.projectRepository.softRemove(project);
     }
 }

@@ -17,12 +17,12 @@ export class UserDto {
   @IsNotEmpty({ message: 'El nombre no puede estar vacío' })
   name?: string;
 
-  @IsOptional()
-  @IsString()
-  @MinLength(3, { message: 'El nombre de usuario debe tener al menos 3 caracteres' })
-  @IsNotEmpty({ message: 'El nombre de usuario no puede estar vacío' })
-//   @Validate(IsUnique, ['User', 'username'])
-  username?: string;
+//   @IsOptional()
+//   @IsString()
+//   @MinLength(3, { message: 'El nombre de usuario debe tener al menos 3 caracteres' })
+//   @IsNotEmpty({ message: 'El nombre de usuario no puede estar vacío' })
+// //   @Validate(IsUnique, ['User', 'username'])
+//   username?: string;
 
   @IsOptional()
   @IsEmail({}, { message: 'El correo electrónico no es válido' })

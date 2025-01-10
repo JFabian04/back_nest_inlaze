@@ -8,6 +8,13 @@ import { QueryParams } from 'src/common/query/query.service';
 export class TaskController {
     constructor(private readonly taskService: TaskService) { }
 
+    //Controlador para traer todas la cantidades de registros de proyectos y tareas
+    @Get('stats')
+    async getStats() {
+            const data = await this.taskService.getStats();
+            return { data: data }
+    }
+
     @Post()
     async create(@Body() createTaskDto: TaskDto) {
         await this.taskService.create(createTaskDto);
@@ -16,13 +23,21 @@ export class TaskController {
         };
     }
 
-    @Get()
-    async findAll(@Query() query: QueryParams) {
-        return await this.taskService.findAll(query);
+    @Get(':project_id/:user_id')
+    async findAll(
+        @Param('project_id') project_id: string,
+        @Param('user_id') user_id: string,
+        @Query() query: QueryParams
+    ) {
+        const params = { ...query, project_id, user_id };
+
+        return await this.taskService.findAll(params);
     }
 
     @Get(':id')
     async findOne(@Param('id') id: number) {
+        console.log('FIN: ');
+        
         try {
             const item = await this.taskService.findOne(id);
             return { data: item }
@@ -45,6 +60,5 @@ export class TaskController {
         return {
             message: 'Tarea eliminada correctamente',
         };
-
     }
 }

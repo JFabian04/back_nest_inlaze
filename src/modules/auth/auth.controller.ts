@@ -1,15 +1,20 @@
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth-dto';
 import { AuthGuard } from './guards/auth.guard';
+import { Response } from 'express';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('login')
-  async login(@Body() loginDto: AuthDto) {
-    return this.authService.login(loginDto);
+  async login(@Body() loginDto: AuthDto, @Res({ passthrough: true }) response: Response) {
+    const data = await this.authService.login(loginDto, response);
+    console.log(data);
+
+    return { data: data }
+
   }
 
   @Get('protected')
@@ -17,4 +22,15 @@ export class AuthController {
   getProtectedRoute() {
     return { message: 'Acceso permitido', user: 'Información de usuario protegida' };
   }
+
+  @Get('logout')
+  logout(@Res() response: Response) {
+    try {
+      response.clearCookie('token', { path: '/' });
+      return response.status(200).send({ status: true, message: 'Logout successfully' });
+    } catch (error) {
+      return response.status(500).send({ status: false, message: 'Error el logout' });
+    }
+  }
+
 }

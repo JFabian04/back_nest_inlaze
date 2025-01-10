@@ -1,10 +1,11 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, Res, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth-dto';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,7 @@ export class AuthService {
         private jwtService: JwtService,
     ) { }
 
-    async login(loginDto: AuthDto) {
+    async login(loginDto: AuthDto, @Res({ passthrough: true }) response: Response) {
         try {
             const { email, password } = loginDto;
 
@@ -33,12 +34,21 @@ export class AuthService {
             const payload = { userId: user.id, email: user.email };
             const accessToken = this.jwtService.sign(payload);
 
+            response.cookie('token', accessToken, {
+                httpOnly: true,  
+                secure: process.env.NODE_ENV === 'production', 
+                sameSite: 'strict',
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                path: '/'
+            });
+
             return {
                 accessToken,
+                payload
             };
         } catch (error) {
             if (error instanceof UnauthorizedException) {
-                throw new UnauthorizedException('Credenciales incorrectas');
+                throw new HttpException('Credenciales incorrectas', 422);
             }
 
             throw new InternalServerErrorException('Error interno del servidor: ' + error.message);

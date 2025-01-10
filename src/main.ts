@@ -3,9 +3,24 @@ import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './utils/response.interceptor';
 import { ExceptionsFilter } from './utils/exception-filter';
+import * as cookieParser from 'cookie-parser';
+
+process.env.TZ = 'UTC';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  //Config CORS
+  app.enableCors({
+    origin: (origin, callback) => {
+      // Permitir cualquier origen (dev)
+      callback(null, true);
+    },
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+    credentials: true
+  });
+
 
   // Habilitar validaciones para DTO
   app.useGlobalPipes(
@@ -14,7 +29,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,
       exceptionFactory: (errors) => {
-        
+
         const formattedErrors = errors.map((error) => ({
           field: error.property,
           constraints: error.constraints,
@@ -34,6 +49,9 @@ async function bootstrap() {
 
   //filtro de excepciones
   app.useGlobalFilters(new ExceptionsFilter());
+
+  //Configurar Cokkies
+  app.use(cookieParser());
 
   await app.listen(process.env.PORT ?? 3000);
 }

@@ -8,6 +8,7 @@ import { UpdateCommentDto } from './dto/update-dto';
 export class CommentController {
     constructor(private readonly commentService: CommentService) { }
 
+    //Controlador para registrar 
     @Post()
     async create(@Body() createCommentDto: CommentDto) {
         await this.commentService.create(createCommentDto);
@@ -15,12 +16,16 @@ export class CommentController {
             message: 'Comentario enviado',
         };
     }
-
-    @Get()
-    async findAll(@Query() query: QueryParams) {
-        return await this.commentService.findAll(query);
+    //Controlador para obtener comentarios por ID de tarea
+    @Get(':task_id')
+    async getComments(
+        @Param('task_id') taskId: string, 
+        @Query() query: any 
+    ) {
+        return await this.commentService.findAll({ task_id: taskId, ...query });
     }
 
+    //controlador para obtener data de un comentario
     @Get(':id')
     async findOne(@Param('id') id: number) {
         try {
@@ -31,6 +36,7 @@ export class CommentController {
         }
     }
 
+    //actualizar registros por ID
     @Put(':id')
     async update(@Param('id') id: number, @Body() updateCommentDto: UpdateCommentDto) {
         await this.commentService.update(id, updateCommentDto);
@@ -39,6 +45,7 @@ export class CommentController {
         };
     }
 
+    //Elimnado logico por ID
     @Delete(':id')
     async remove(@Param('id') id: number) {
         await this.commentService.softDelete(id);

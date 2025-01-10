@@ -11,6 +11,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 export enum Status {
@@ -37,8 +39,8 @@ export class Task {
   })
   status: Status;
 
-  @UpdateDateColumn()
-  dateLimit: Date;
+  @Column({ type: 'date' })
+  date_limit: Date;
 
   @DeleteDateColumn({ nullable: true })
   deleted_at: Date | null;
@@ -53,9 +55,19 @@ export class Task {
   @JoinColumn({ name: 'project_id' })
   project: number;
 
-  @ManyToOne(() => User, (user) => user.tasks)
-  @JoinColumn({ name: 'task_id' })
-  user: number;
+  @ManyToMany(() => User, (user) => user.tasks)
+  @JoinTable({
+    name: 'task_users',
+    joinColumn: {
+      name: 'task_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'user_id', 
+      referencedColumnName: 'id',
+    },
+  })
+  users: User[];
 
   @OneToMany(() => Comment, (comment) => comment.task)
   comments: Comment[];

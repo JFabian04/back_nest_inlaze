@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Task } from './entities/task.entity';
+import { Status, Task } from './entities/task.entity';
 import { QueryService } from 'src/common/query/query.service';
 import { TaskDto } from './dto/task-dto';
 import { UpdateTaskDto } from './dto/update-dto';
@@ -21,20 +21,33 @@ export class TaskService {
 
 
   async create(createTaskDto: TaskDto): Promise<void> {
-    //Validar si el usuario asignado existe 
-    await existsForeignValidator(this.userRepository, createTaskDto.user, 'id', 'User');
+    // Validar si los usuarios asignados existen
+    await existsForeignValidator(this.userRepository, createTaskDto.users, 'id', 'User');
 
-    //Validar si el projeyecto existe 
+    // Validar si el proyecto existe
     await existsForeignValidator(this.projectRepository, createTaskDto.project, 'id', 'Project');
 
-    const item = this.taskRepository.create(createTaskDto);
-    console.log(item);
-    await this.taskRepository.save(item);
+    // Obtener las instancias completas de los usuarios
+    const users = await this.userRepository.findByIds(createTaskDto.users);
+    console.log('USER TASK: ', users);
+
+    const task = this.taskRepository.create({
+      ...createTaskDto,
+      users,
+    });
+
+    await this.taskRepository.save(task);
   }
 
   async findAll(params): Promise<{ data: Task[], total: number }> {
-    return await this.queryService.findWithPaginationAndFilters(params, this.taskRepository);
+    const joinTableFilters = {
+      users: params.user_id,
+    };
+    console.log('joinFilters: ', joinTableFilters);
+
+    return this.queryService.findWithPaginationAndFilters(params, this.taskRepository, ['users'], joinTableFilters);
   }
+
 
   async findOne(id: number): Promise<Task> {
     const task = await this.taskRepository.findOne({ where: { id } });
@@ -46,14 +59,19 @@ export class TaskService {
 
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<void> {
     //Validar si el usuario asignado existe 
-    await existsForeignValidator(this.userRepository, updateTaskDto.user, 'id');
+    await existsForeignValidator(this.userRepository, updateTaskDto.users, 'id');
 
     //Validar si el projeyecto existe 
     await existsForeignValidator(this.projectRepository, updateTaskDto.project, 'id', 'Project');
 
-    // Realiza actualizacion
+    //Obtener instancias user
+    const users = await this.userRepository.findByIds(updateTaskDto.users);
+
     const task = await this.findOne(id);
-    const updatedTask = this.taskRepository.merge(task, updateTaskDto);
+    const updatedTask = this.taskRepository.merge(task, {
+      ...updateTaskDto,
+      users,
+    });
     await this.taskRepository.save(updatedTask);
   }
 
@@ -62,4 +80,48 @@ export class TaskService {
     await this.taskRepository.softRemove(task);
   }
 
+  //Servicio para retornar todos los regsitros ede projecto s tareas y cuantos hay por cada estado
+  async getStats(): Promise<any> {
+    console.log('cdcdcdc');
+
+    // Proyectos
+    const active = await this.projectRepository.count({
+      where: { status: true },
+    });
+
+    const closed = await this.projectRepository.count({
+      where: { status: false },
+    });
+
+    const total = await this.projectRepository.count();
+
+    // Tareas
+    const notStarted = await this.taskRepository.count({
+      where: { status: Status.PorHacer }
+    });
+
+    const inProgress = await this.taskRepository.count({
+      where: { status: Status.EnProgreso },
+    });
+
+    const completed = await this.taskRepository.count({
+      where: { status: Status.Completada },
+    });
+
+    const totalTasksCount = await this.taskRepository.count();
+
+    return {
+      projects: {
+        active,
+        closed,
+        total,
+      },
+      tasks: {
+        notStarted,
+        inProgress,
+        completed,
+        totalTasksCount,
+      },
+    };
+  }
 }

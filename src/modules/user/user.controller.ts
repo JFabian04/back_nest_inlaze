@@ -1,7 +1,8 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Query } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
+import { QueryParams } from 'src/common/query/query.service';
 
 @Controller('api/users')
 export class UserController {
@@ -11,17 +12,17 @@ export class UserController {
      * Registrar usuario
      * @param userDto
      */
-    @Post('register')
+    @Post()
     async register(@Body() userDto: UserDto) {
         await this.userService.create(userDto);
         return {
-          message: 'Usuario registrado con éxito.',
+            message: 'Usuario registrado con éxito.',
         };
     }
 
     @Get()
-    async findAll(): Promise<User[]> {
-        return this.userService.findAll();
+    async findAll(@Query() query: QueryParams) {
+        return await this.userService.findAll(query);
     }
 
 }

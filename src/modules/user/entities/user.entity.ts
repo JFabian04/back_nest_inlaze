@@ -12,6 +12,8 @@ import {
   DeleteDateColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 
@@ -21,7 +23,7 @@ export class User {
   id: number;
 
   @Column()
-  username: string;
+  name: string;
 
   @Column()
   email: string;
@@ -41,7 +43,7 @@ export class User {
   @OneToMany(() => Project, (project) => project.user)
   projects: Project[];
 
-  @OneToMany(() => Task, (task) => task.user)
+  @ManyToMany(() => Task, (task) => task.users)
   tasks: Task[];
 
   @OneToMany(() => Comment, (comment) => comment.user)

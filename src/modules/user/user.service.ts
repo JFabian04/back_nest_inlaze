@@ -1,15 +1,18 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
+import { QueryService } from 'src/common/query/query.service';
+import { existsForeignValidator } from 'src/validators/exists-validator';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
+        private readonly queryService: QueryService
     ) { }
 
     /**
@@ -17,7 +20,25 @@ export class UserService {
      * @param UserDto 
     */
     async create(userDto: UserDto): Promise<User> {
-        try {
+
+            const rep = await existsForeignValidator(this.userRepository, userDto.email, 'email', null, false);
+            
+            if (rep !== null) {
+                const validationError = {
+                    status: 'error',
+                    message: 'Validation failed',
+                    errors: [
+                        {
+                            field: 'email',
+                            constraints: {
+                                isEmail: 'El email ya ha sido registrado'
+                            }
+                        }
+                    ]
+                };
+                throw new BadRequestException(validationError);
+            }
+
             // Encriptar la contraeña
             const saltRound = parseInt(process.env.SALT_ROUNDS);
 
@@ -30,12 +51,10 @@ export class UserService {
             });
 
             return await this.userRepository.save(user);
-        } catch (error) {
-            throw new InternalServerErrorException('Error interno del servidor: ' + error.message);
-        }
+
     }
 
-    async findAll(): Promise<User[]> {
-        return this.userRepository.find();
+    async findAll(params): Promise<{ data: User[], total: number }> {
+        return await this.queryService.findWithPaginationAndFilters(params, this.userRepository);
     }
 }
