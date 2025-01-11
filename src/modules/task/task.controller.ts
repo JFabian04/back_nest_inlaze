@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Patch, Delete, Query, NotFoundExcep
 import { TaskService } from './task.service';
 import { TaskDto } from './dto/task-dto';
 import { UpdateTaskDto } from './dto/update-dto';
-import { QueryParams } from 'src/common/query/query.service';
+import { QueryParams } from '../../common/query/query.service';
 
 @Controller('api/tasks')
 export class TaskController {

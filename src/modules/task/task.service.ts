@@ -2,11 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Status, Task } from './entities/task.entity';
-import { QueryService } from 'src/common/query/query.service';
+import { QueryService } from '../../common/query/query.service';
 import { TaskDto } from './dto/task-dto';
 import { UpdateTaskDto } from './dto/update-dto';
 import { User } from '../user/entities/user.entity';
-import { existsForeignValidator } from 'src/validators/exists-validator';
+import { existsForeignValidator } from '../../validators/exists-validator';
 import { Project } from '../project/entities/project.entity';
 
 @Injectable()

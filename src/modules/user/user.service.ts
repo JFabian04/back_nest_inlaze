@@ -4,8 +4,8 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
-import { QueryService } from 'src/common/query/query.service';
-import { existsForeignValidator } from 'src/validators/exists-validator';
+import { QueryService } from '../../common/query/query.service';
+import { existsForeignValidator } from '../../validators/exists-validator';
 import { Rol } from '../rol/entitites/role.entity';
 
 @Injectable()

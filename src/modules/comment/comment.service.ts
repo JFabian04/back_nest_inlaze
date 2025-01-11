@@ -2,10 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
-import { existsForeignValidator } from 'src/validators/exists-validator';
+import { existsForeignValidator } from '../../validators/exists-validator';
 import { Task } from '../task/entities/task.entity';
 import { CommentDto } from './dto/comment-dto';
-import { QueryService } from 'src/common/query/query.service';
+import { QueryService } from '../../common/query/query.service';
 import { Comment } from './entities/comment.entity';
 import { UpdateCommentDto } from './dto/update-dto';
 

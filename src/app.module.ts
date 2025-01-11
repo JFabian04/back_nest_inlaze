@@ -12,6 +12,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { DatabaseExceptionFilter } from './utils/database-exception.filter';
 import { AuthModule } from './modules/auth/auth.module';
 import { RolModule } from './modules/rol/rol.module';
+import { SeederService } from './database/seeders/seederService';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { RolModule } from './modules/rol/rol.module';
   controllers: [AppController],
   providers: [
     AppService,
+    SeederService,
     {
       provide: APP_FILTER, 
       useClass: DatabaseExceptionFilter,

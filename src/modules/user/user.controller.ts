@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpException, HttpStatus, Post, Query } from '@
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-import { QueryParams } from 'src/common/query/query.service';
+import { QueryParams } from '../../common/query/query.service';
 
 @Controller('api/users')
 export class UserController {

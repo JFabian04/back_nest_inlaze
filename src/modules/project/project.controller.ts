@@ -3,7 +3,7 @@ import { ProjectDto } from './dto/project-dto';
 import { ProjectService } from './project.service';
 import { UpdateProjectDto } from './dto/update-dto';
 import { Project } from './entities/project.entity';
-import { QueryParams } from 'src/common/query/query.service';
+import { QueryParams } from '../../common/query/query.service';
 import { RolesGuard } from '../auth/guards/role.guard';
 import { Roles } from '../auth/decorator/role.decorator';
 import { AuthGuard } from '../auth/guards/auth.guard';

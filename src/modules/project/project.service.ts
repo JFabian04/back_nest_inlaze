@@ -4,8 +4,7 @@ import { Project } from './entities/project.entity';
 import { ProjectDto } from './dto/project-dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateProjectDto } from './dto/update-dto';
-import { QueryService } from 'src/common/query/query.service';
-
+import { QueryService } from '../../common/query/query.service';
 
 @Injectable()
 export class ProjectService {

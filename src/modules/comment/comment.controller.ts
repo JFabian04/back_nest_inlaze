@@ -1,9 +1,8 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CommentDto } from './dto/comment-dto';
-import { QueryParams } from 'src/common/query/query.service';
 import { UpdateCommentDto } from './dto/update-dto';
-import { CommentGateway } from 'src/utils/socket/comment-gateway/comment.gateway';
+import { CommentGateway } from '../../utils/socket/comment-gateway/comment.gateway';
 
 @Controller('api/comments')
 export class CommentController {
