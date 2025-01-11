@@ -40,12 +40,24 @@ export class TaskService {
   }
 
   async findAll(params): Promise<{ data: Task[], total: number }> {
-    const joinTableFilters = {
-      users: params.user_id,
-    };
-    console.log('joinFilters: ', joinTableFilters);
+    const user = await this.userRepository.findOne({ where: { id: params.user_id }, relations: ['rol'] })
+    let joinTableFilters;
+    if (user.rol.name != 'admin') {
+      joinTableFilters = {
+        users: params.user_id,
+      };
+    }
 
-    return this.queryService.findWithPaginationAndFilters(params, this.taskRepository, ['users'], joinTableFilters);
+    const filters = {
+      project_id: params.project_id,
+    };
+
+    return this.queryService.findWithPaginationAndFilters(
+      { ...params, filters },
+      this.taskRepository,
+      ['users'],
+      joinTableFilters ? joinTableFilters : ''
+    );
   }
 
 
