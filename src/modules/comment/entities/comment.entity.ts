@@ -19,6 +19,9 @@ export class Comment {
 
   @Column()
   content: string;
+  
+  @Column({ default: false })
+  read: boolean;  
 
   @DeleteDateColumn({ nullable: true })
   deleted_at: Date | null;
@@ -31,9 +34,10 @@ export class Comment {
 
   @ManyToOne(() => Task, (task) => task.comments)
   @JoinColumn({ name: 'task_id' })
-  task: number;
+  task: Task;
 
   @ManyToOne(() => User, (user) => user.comments)
   @JoinColumn({ name: 'user_id' })
-  user: number;
+  user: User;
+  
 }

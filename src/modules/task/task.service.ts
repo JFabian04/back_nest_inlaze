@@ -50,7 +50,7 @@ export class TaskService {
 
 
   async findOne(id: number): Promise<Task> {
-    const task = await this.taskRepository.findOne({ where: { id } });
+    const task = await this.taskRepository.findOne({ where: { id }, relations: ['users'], });
     if (!task) {
       throw new NotFoundException('No se encontró el registro con Id: ' + id);
     }
@@ -64,15 +64,29 @@ export class TaskService {
     //Validar si el projeyecto existe 
     await existsForeignValidator(this.projectRepository, updateTaskDto.project, 'id', 'Project');
 
-    //Obtener instancias user
+    const task = await this.findOne(id);
+
+    // Obtener nuevas instancias de usuarios
     const users = await this.userRepository.findByIds(updateTaskDto.users);
 
-    const task = await this.findOne(id);
-    const updatedTask = this.taskRepository.merge(task, {
-      ...updateTaskDto,
-      users,
-    });
-    await this.taskRepository.save(updatedTask);
+    // Actualizar las propiedades de la tarea
+    task.title = updateTaskDto.title;
+    task.description = updateTaskDto.description;
+    task.status = updateTaskDto.status;
+    task.date_limit = updateTaskDto.date_limit;
+    task.project = updateTaskDto.project;
+
+    // Actualizar la relación de usuarios de la tarea
+    task.users = users;
+
+    await this.taskRepository.save(task);
+
+    // Eliminar las relaciones antiguas que no están en el nuevo arreglo de usuarios
+    await this.taskRepository
+      .createQueryBuilder()
+      .relation(Task, 'users')
+      .of(id) // Tarea con el id
+      .addAndRemove(users, task.users);
   }
 
   async softDelete(id: number): Promise<void> {
@@ -82,7 +96,6 @@ export class TaskService {
 
   //Servicio para retornar todos los regsitros ede projecto s tareas y cuantos hay por cada estado
   async getStats(): Promise<any> {
-    console.log('cdcdcdc');
 
     // Proyectos
     const active = await this.projectRepository.count({

@@ -1,15 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { User } from '../../src/modules/user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity('roles')
-export class Role {
+export class Rol {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
 
-  @OneToMany(() => User, (user) => user.role)
+  @OneToMany(() => User, (user) => user.rol)
   users: User[];
 }
 

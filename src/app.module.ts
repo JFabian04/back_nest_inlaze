@@ -11,6 +11,7 @@ import { getDatabaseConfig  } from './database/config';
 import { APP_FILTER } from '@nestjs/core';
 import { DatabaseExceptionFilter } from './utils/database-exception.filter';
 import { AuthModule } from './modules/auth/auth.module';
+import { RolModule } from './modules/rol/rol.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AuthModule } from './modules/auth/auth.module';
     TaskModule,
     CommentModule,
     AuthModule,
+    RolModule,
   ],
   controllers: [AppController],
   providers: [

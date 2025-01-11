@@ -1,32 +1,62 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CommentDto } from './dto/comment-dto';
 import { QueryParams } from 'src/common/query/query.service';
 import { UpdateCommentDto } from './dto/update-dto';
+import { CommentGateway } from 'src/utils/socket/comment-gateway/comment.gateway';
 
 @Controller('api/comments')
 export class CommentController {
-    constructor(private readonly commentService: CommentService) { }
+    constructor(
+        private readonly commentService: CommentService,
+        private readonly commentGateWay: CommentGateway
+    ) { }
 
     //Controlador para registrar 
     @Post()
     async create(@Body() createCommentDto: CommentDto) {
-        await this.commentService.create(createCommentDto);
+        const comment = await this.commentService.create(createCommentDto);
+        this.commentGateWay.server.emit('newComment', comment);
         return {
             message: 'Comentario enviado',
+            data: comment,
         };
     }
+
+    //Actualizar el estado de leido de un comentario
+    @Patch('read/:user_id')
+    async updateStatus(@Param('user_id') id: number) {
+        await this.commentService.updateStatus(id);
+        return {
+            message: 'Comentario leído'
+        }
+    }
+
+    //Obtener cantidad de comentarios no leidso por ID de usuario
+    @Get('unread/:task_id/:user_id')
+    async unread(@Param('user_id') user_id: number, @Param('task_id') task_id: number) {
+        const resp = await this.commentService.getNotRead(task_id, user_id);
+        console.log('controler data: ', resp);
+        console.log('params: ',  task_id, user_id,);
+        
+        return {
+            data: resp,
+        };
+    }
+
     //Controlador para obtener comentarios por ID de tarea
     @Get(':task_id')
     async getComments(
-        @Param('task_id') taskId: string, 
-        @Query() query: any 
+        @Param('task_id') taskId: string,
+        @Query() query: any
     ) {
+        console.log('XDXD');
+
         return await this.commentService.findAll({ task_id: taskId, ...query });
     }
 
     //controlador para obtener data de un comentario
-    @Get(':id')
+    @Get('find/:id')
     async findOne(@Param('id') id: number) {
         try {
             const item = await this.commentService.findOne(id);
@@ -54,4 +84,5 @@ export class CommentController {
         };
 
     }
+
 }

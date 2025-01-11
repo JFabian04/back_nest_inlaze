@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get, Res } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Res, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth-dto';
 import { AuthGuard } from './guards/auth.guard';
@@ -18,9 +18,12 @@ export class AuthController {
   }
 
   @Get('protected')
-  @UseGuards(AuthGuard)
-  getProtectedRoute() {
-    return { message: 'Acceso permitido', user: 'Información de usuario protegida' };
+  @UseGuards(AuthGuard) 
+  getProtectedRoute(@Request() req) {
+    return { 
+      message: 'Acceso permitido',
+      data: req.user, 
+    };
   }
 
   @Get('logout')

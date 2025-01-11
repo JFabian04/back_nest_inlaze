@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromRequest(request);
 
     if (!token) {
-      throw new UnauthorizedException('Token not found');
+      throw new UnauthorizedException('Token no encontrado.');
     }
 
     try {
@@ -22,15 +22,12 @@ export class AuthGuard implements CanActivate {
       request.user = payload;
       return true;
     } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('Token inválido!');
     }
   }
 
   private extractTokenFromRequest(request): string | null {
-    const token = request.headers['authorization'];
-    if (token && token.startsWith('Bearer ')) {
-      return token.replace('Bearer ', '');
-    }
-    return null;
+    const token = request.cookies['token']; 
+    return token || null; 
   }
 }

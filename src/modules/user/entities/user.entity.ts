@@ -1,4 +1,4 @@
-import { Role } from '../../../entitites/role.entity';
+import { Rol } from '../../rol/entitites/role.entity';
 import { Comment } from '../../comment/entities/comment.entity';
 import { Project } from '../../project/entities/project.entity';
 import { Task } from '../../task/entities/task.entity';
@@ -49,7 +49,7 @@ export class User {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
-  @ManyToOne(() => Role, (role) => role.users)
+  @ManyToOne(() => Rol, (role) => role.users)
   @JoinColumn({ name: 'role_id' }) 
-  role: number;
+  rol: Rol;
 }

@@ -18,20 +18,25 @@ export class CommentService {
         private readonly queryService: QueryService
     ) { }
 
-    async create(createCommentDto: CommentDto): Promise<void> {
+    ///Servicio para registrar los comentarios
+    async create(createCommentDto: CommentDto): Promise<Comment> {
         //Validar si el usuario asignado existe 
         await existsForeignValidator(this.userRepository, createCommentDto.user, 'id', 'User');
 
         //Validar si la tarea asignado existe 
-        await existsForeignValidator(this.taskRepository, createCommentDto.task, 'id', 'Tarea');
+        // await existsForeignValidator(this.taskRepository, createCommentDto.task, 'id', 'Tarea');
+        const user = await this.userRepository.findOne({ where: { id: createCommentDto.user } })
+        const task = await this.taskRepository.findOne({ where: { id: createCommentDto.task } })
+        const item = this.commentRepository.create({ ...createCommentDto, user, task });
+        // const item = this.commentRepository.create(data);
 
-        const item = this.commentRepository.create(createCommentDto);
-
-        await this.commentRepository.save(item);
+        const saved = await this.commentRepository.save(item);
+        return saved;
     }
 
+    //Obtener comentarios por Id de tarea y id de usuario
     async findAll(params): Promise<{ data: Comment[], total: number }> {
-        const { task_id, page = 1, limit = 10, filters, sortField, sortOrder = 'ASC' } = params;
+        const { task_id, page = 1, limit, filters, sortField, sortOrder } = params;
 
         if (!task_id) {
             throw new Error('El parámetro "task_id" es obligatorio');
@@ -66,6 +71,7 @@ export class CommentService {
         return { data, total };
     }
 
+    //Obtener un registro por ID
     async findOne(id: number): Promise<Comment> {
         const data = await this.commentRepository.findOne({ where: { id } });
         if (!data) {
@@ -74,6 +80,7 @@ export class CommentService {
         return data;
     }
 
+    //Actualizar la data de un registro
     async update(id: number, updateCommentDto: UpdateCommentDto): Promise<void> {
         //Validar si el usuario asignado existe 
         await existsForeignValidator(this.userRepository, updateCommentDto.user, 'id', 'User');
@@ -83,13 +90,41 @@ export class CommentService {
 
         // Realiza actualizacion
         const data = await this.findOne(id);
-        const updated = this.commentRepository.merge(data, updateCommentDto);
+        const user = await this.userRepository.findOne({ where: { id: updateCommentDto.user } })
+        const task = await this.taskRepository.findOne({ where: { id: updateCommentDto.task } })
+        const item = this.commentRepository.create({ ...updateCommentDto, user, task });
+
+        const updated = this.commentRepository.merge(data, item);
         await this.commentRepository.save(updated);
     }
 
+    //Elimnación logica de los comentarios 
     async softDelete(id: number): Promise<void> {
         const item = await this.findOne(id);
         await this.commentRepository.softRemove(item);
     }
 
+    //Función para actualizar el esatdo de un comentario a "Leido"
+    async updateStatus(user_id: number): Promise<void> {
+        const user = await this.userRepository.findOne({ where: { id: user_id } })
+        await existsForeignValidator(this.userRepository, user_id, 'id');
+        await this.commentRepository.update(
+            { user, read: false },
+            { read: true }
+        );
+    }
+
+    //Función para obtener la canitdad de comentarios No Leidos
+    async getNotRead(task_id: number, user_id: number): Promise<number> {
+        const data = await this.commentRepository.count({
+            where: {
+              user: { id: user_id },  
+              task: { id: task_id },  
+              read: false
+            }
+          });
+        console.log(data);
+        
+        return data;
+    }
 }
