@@ -52,7 +52,7 @@ export class SeederService {
       const hashedPassword = await bcrypt.hash('12345Aa', 10);
       
       await this.connection.getRepository(User).save({
-        name: 'ADMIN',  
+        name: 'Admin',  
         email: 'admin@gmail.com',
         password: hashedPassword,
         rol: adminRole, 

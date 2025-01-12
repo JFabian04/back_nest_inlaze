@@ -14,8 +14,8 @@ npm install
 El .env no se excluyó del proyecto para mayor facilidad.
 
 BASE DE DATOS POSTGRESQL
--- Importar la Base de Datos mysql, desde el archivo dentro del llamado task_bd.sql
--- Si no se importa, solo basta con crear un Base de Datos con el nombre task_bd (Al arrancar el proyecto se cosntruiran las tablas)
+-- Importar la Base de Datos, desde el archivo llamado task_bd.sql
+-- Si no se importa, solo basta con crear una Base de Datos con el nombre task_bd (Al arrancar el proyecto se cosntruiran las tablas)
 
 Inciar Servidor
 ```bash
@@ -25,10 +25,16 @@ npm start
 ```
 
 SEEDER (Llena las tablas con los ROlES y un ADMIN para iniciar sesión)
-
-Correr migracion despúes de tener la BD creada y haber corrido el proyecto.
+-- Correr migracion despúes de tener la BD creada y haber corrido el proyecto.
 ```bash
 npm run seed
 ```
+
+CREDENCIALES - INCIAR SESION
+ -- Correo
+ admin@gmail.com
+
+ -- Contraseña
+ 12345Aa
 
 
